@@ -12,7 +12,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -28,7 +27,7 @@ public class App {
             String protocol = "https";
             String webHost = "www.google.com";
             String webPath = "/search";
-            HashMap<String, String> params = new HashMap<String,String>();
+            HashMap<String, String> params = new HashMap<>();
             params.put("q","lmgtfy");
             makeHTTPRequest(protocol, webHost, webPath, params);
             makeManualHTTPRequest(protocol, webHost, webPath, params);
@@ -73,25 +72,9 @@ public class App {
 
         HttpEntity entity = response.getEntity();
 
-        byte[] content = new byte[(int) entity.getContentLength()];
+        String content = EntityUtils.toString(entity);
 
-        InputStream html = entity.getContent();
-
-        int i = 0;
-
-        int _byte = 0;
-        try {
-            while ( (_byte = html.read()) != -1){
-                content[i] = (byte)_byte;
-                i++;
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        System.out.println(new String(content));
-
-        html.close();
+        System.out.println(content);
         EntityUtils.consume(entity);
         response.close();
     }
