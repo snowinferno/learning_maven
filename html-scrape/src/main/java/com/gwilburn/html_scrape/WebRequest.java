@@ -1,9 +1,15 @@
 package com.gwilburn.html_scrape;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -131,4 +137,36 @@ public class WebRequest {
         HTTPS
     }
 
+    public void makeManualHTTPRequest(String protocol, String host, String path, HashMap<String,String> params) throws URISyntaxException, IOException {
+        this.webProtocol = protocol;
+        this.host = host;
+        this.path = path;
+        this.parameters = params;
+        this.makeManualHTTPRequest();
+    }
+
+    public void makeManualHTTPRequest() throws URISyntaxException, IOException{
+        URIBuilder builder = new URIBuilder();
+        builder.setScheme(this.webProtocol).setHost(host).setPath(path);
+        if( this.parameters != null ){
+            Set<String> keys = this.parameters.keySet();
+            for( String key : keys ){
+                builder.addParameter(key,this.parameters.get(key));
+            }
+        }
+
+        URI uri = builder.build();
+        HttpGet getReq = new HttpGet(uri);
+
+        CloseableHttpClient client = HttpClients.createDefault();
+        CloseableHttpResponse response = client.execute(getReq);
+
+        HttpEntity entity = response.getEntity();
+
+        String content = EntityUtils.toString(entity);
+
+        System.out.println(content);
+        EntityUtils.consume(entity);
+        response.close();
+    }
 }
