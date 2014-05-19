@@ -106,35 +106,7 @@ public class WebRequest {
         URI uri = builder.build();
         Response resp = Request.Get(uri).execute();
         Content content = resp.returnContent();
-//        System.out.println(content);
         logger.info(content);
-    }
-
-    private void checkRequestPieces() throws URISyntaxException {
-        if( this.host == null || this.path == null || this.webProtocol == null ){
-            String providedURL = this.webProtocol + "://" + this.host + "/" + this.path;
-
-            if( this.parameters == null )
-                providedURL += "?" + this.parameters;
-            else{
-                providedURL += "?";
-                Set<String> keys = this.parameters.keySet();
-                for( String key : keys ){
-                    providedURL += key + "=" + this.parameters.get(key) + "&";
-                }
-                providedURL = providedURL.replaceAll("&$","");
-            }
-
-            String reason = "";
-            if( this.host == null )
-                reason += "Host is null. ";
-            if( this.path == null )
-                reason += "Path is null. ";
-            if( this.webProtocol == null )
-                reason += "Protocol is null. ";
-
-            throw new URISyntaxException(providedURL, reason);
-        }
     }
 
     public void makeManualHTTPRequest(String protocol, String host, String path, HashMap<String, String> params) throws URISyntaxException, IOException {
@@ -146,6 +118,7 @@ public class WebRequest {
     }
 
     public void makeManualHTTPRequest() throws URISyntaxException, IOException {
+        checkRequestPieces();
         URIBuilder builder = new URIBuilder();
         builder.setScheme(this.webProtocol).setHost(host).setPath(path);
         if (this.parameters != null) {
@@ -166,9 +139,35 @@ public class WebRequest {
         String content = EntityUtils.toString(entity);
 
         logger.info(content);
-//        System.out.println(content);
         EntityUtils.consume(entity);
         response.close();
+    }
+
+    private void checkRequestPieces() throws URISyntaxException {
+        if (this.host == null || this.path == null || this.webProtocol == null) {
+            String providedURL = this.webProtocol + "://" + this.host + "/" + this.path;
+
+            if (this.parameters == null)
+                providedURL += "?" + this.parameters;
+            else {
+                providedURL += "?";
+                Set<String> keys = this.parameters.keySet();
+                for (String key : keys) {
+                    providedURL += key + "=" + this.parameters.get(key) + "&";
+                }
+                providedURL = providedURL.replaceAll("&$", "");
+            }
+
+            String reason = "";
+            if (this.host == null)
+                reason += "Host is null. ";
+            if (this.path == null)
+                reason += "Path is null. ";
+            if (this.webProtocol == null)
+                reason += "Protocol is null. ";
+
+            throw new URISyntaxException(providedURL, reason);
+        }
     }
 
     public enum protocol {
