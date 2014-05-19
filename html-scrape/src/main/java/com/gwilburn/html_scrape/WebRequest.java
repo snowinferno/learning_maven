@@ -10,6 +10,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,10 +23,12 @@ import java.util.Set;
  * Created by Greg on 5/13/14.
  */
 public class WebRequest {
+    private static Logger logger = LogManager.getLogger(WebRequest.class.getName());
     private HashMap<String,String> parameters;
     private String webProtocol;
     private String host;
     private String path;
+
     public WebRequest(String url) {
         if( url.startsWith("http") ){
             webProtocol = url.toLowerCase().split(":")[0];
@@ -102,7 +106,8 @@ public class WebRequest {
         URI uri = builder.build();
         Response resp = Request.Get(uri).execute();
         Content content = resp.returnContent();
-        System.out.println(content);
+//        System.out.println(content);
+        logger.info(content);
     }
 
     private void checkRequestPieces() throws URISyntaxException {
@@ -132,12 +137,7 @@ public class WebRequest {
         }
     }
 
-    public enum protocol {
-        HTTP,
-        HTTPS
-    }
-
-    public void makeManualHTTPRequest(String protocol, String host, String path, HashMap<String,String> params) throws URISyntaxException, IOException {
+    public void makeManualHTTPRequest(String protocol, String host, String path, HashMap<String, String> params) throws URISyntaxException, IOException {
         this.webProtocol = protocol;
         this.host = host;
         this.path = path;
@@ -145,13 +145,13 @@ public class WebRequest {
         this.makeManualHTTPRequest();
     }
 
-    public void makeManualHTTPRequest() throws URISyntaxException, IOException{
+    public void makeManualHTTPRequest() throws URISyntaxException, IOException {
         URIBuilder builder = new URIBuilder();
         builder.setScheme(this.webProtocol).setHost(host).setPath(path);
-        if( this.parameters != null ){
+        if (this.parameters != null) {
             Set<String> keys = this.parameters.keySet();
-            for( String key : keys ){
-                builder.addParameter(key,this.parameters.get(key));
+            for (String key : keys) {
+                builder.addParameter(key, this.parameters.get(key));
             }
         }
 
@@ -165,8 +165,14 @@ public class WebRequest {
 
         String content = EntityUtils.toString(entity);
 
-        System.out.println(content);
+        logger.info(content);
+//        System.out.println(content);
         EntityUtils.consume(entity);
         response.close();
+    }
+
+    public enum protocol {
+        HTTP,
+        HTTPS
     }
 }

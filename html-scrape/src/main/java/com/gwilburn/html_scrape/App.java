@@ -1,11 +1,15 @@
 package com.gwilburn.html_scrape;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 
 /**
  * Beginnings of an HTML Scraper.
  */
 public class App {
+    private static Logger logger = LogManager.getLogger(App.class.getName());
     public static void main(String[] args) {
         try {
             String protocol = "https";
@@ -16,14 +20,15 @@ public class App {
 
             WebRequest request = new WebRequest();
             request.setWebProtocol(WebRequest.protocol.HTTPS);
-            request.addParameter("q","lmgtfy");
-            System.out.println("FLUENT REQUEST: ");
-            request.makeFluentRequest(protocol,webHost,webPath,params);
-            System.out.println("\n\nMANUAL REQUEST: ");
+            request.addParameter("q", "lmgtfy");
+            logger.trace("FLUENT REQUEST: ");
+
+            request.makeFluentRequest(protocol, webHost, webPath, params);
+            logger.trace("MANUAL REQUEST: ");
+
             request.makeManualHTTPRequest(protocol, webHost, webPath, params);
         } catch (Exception e) {
-            System.out.println(e.toString());
-            e.printStackTrace();
+            logger.error("ERROR SCRAPING HTML", e);
         }
     }
 

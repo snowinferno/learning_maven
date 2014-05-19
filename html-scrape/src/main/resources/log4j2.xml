@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Appenders>
+        <Console name="ConsoleOut" target="SYSTEM_OUT">
+            <ThresholdFilter level="warn" onMatch="DENY" onMismatch="ACCEPT"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <Console name="ConsoleErr" target="SYSTEM_ERR">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="ConsoleOut"/>
+            <AppenderRef ref="ConsoleErr" level="warn"/>
+        </Root>
+    </Loggers>
+</Configuration>
