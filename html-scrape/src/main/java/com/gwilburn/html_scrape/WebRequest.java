@@ -29,6 +29,11 @@ public class WebRequest {
     private String host;
     private String path;
 
+    public enum protocol {
+        HTTP,
+        HTTPS
+    }
+
     public WebRequest(String url) {
         if( url.startsWith("http") ){
             webProtocol = url.toLowerCase().split(":")[0];
@@ -168,10 +173,5 @@ public class WebRequest {
 
             throw new URISyntaxException(providedURL, reason);
         }
-    }
-
-    public enum protocol {
-        HTTP,
-        HTTPS
     }
 }
